@@ -2,22 +2,25 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MauiReversi.MainPage">
+    <HorizontalStackLayout>
+        <Label x:Name="turnLB" HorizontalOptions="Center"/>
 
-    <Grid x:Name="grid" HorizontalOptions="Center" VerticalOptions="Center" 
+        <Grid x:Name="grid" HorizontalOptions="Center" VerticalOptions="Center" 
         RowSpacing="3" ColumnSpacing="3" RowDefinitions="100,100,100" ColumnDefinitions="100,100,100">
 
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="0" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="1" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="2" Clicked="TileClicked"/>
-
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="0" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="1" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="2" Clicked="TileClicked"/>
-
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="0" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="1" Clicked="TileClicked"/>
-        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="2" Clicked="TileClicked"/>
+        <Button x:Name="b00" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="0" Clicked="TileClicked"/>
+        <Button x:Name="b01" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="1" Clicked="TileClicked"/>
+        <Button x:Name="b02" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="2" Clicked="TileClicked"/>
+        <Button x:Name="b10" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="0" Clicked="TileClicked"/>
+        <Button x:Name="b11" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="1" Clicked="TileClicked"/>
+        <Button x:Name="b12" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="2" Clicked="TileClicked"/>
+        <Button x:Name="b20" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="0" Clicked="TileClicked"/>
+        <Button x:Name="b21" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="1" Clicked="TileClicked"/>
+        <Button x:Name="b22" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="2" Clicked="TileClicked"/>
 
     </Grid>
+
+    </HorizontalStackLayout>
+
 
 </ContentPage>

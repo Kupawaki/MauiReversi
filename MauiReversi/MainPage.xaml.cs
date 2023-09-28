@@ -8,15 +8,31 @@ namespace MauiReversi
         private int turn = 0;
         private Color[] colors = { Color.FromRgb(255,50,50), Color.FromRgb(50,255,50) };
 
+        private Button[][] tiles;
+
         public MainPage()
         {
             InitializeComponent();
+            fillTileArray();
+            update();
+        }
+
+        private void fillTileArray()
+        {
+            Debug.WriteLine(grid.Children.ToArray());
+        }
+
+        private void update()
+        {
+            turnLB.Text = $"Player {turn + 1}'s turn";
         }
 
         private void TileClicked(object sender, EventArgs e)
         {
+
+            Debug.WriteLine(grid.Children.ToArray());
             Button button = sender as Button;
-            //Debug.WriteLine(grid.GetColumn(button));
+            Debug.WriteLine(grid.GetColumn(button));
             //Debug.WriteLine(grid.GetRow(button));
 
             if (button.Text == "")
