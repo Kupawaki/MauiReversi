@@ -6,18 +6,17 @@
     <Grid x:Name="grid" HorizontalOptions="Center" VerticalOptions="Center" 
         RowSpacing="3" ColumnSpacing="3" RowDefinitions="100,100,100" ColumnDefinitions="100,100,100">
 
-        <Button BackgroundColor="White"  Grid.Row="0" Grid.Column="0" Clicked="TileClicked" CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type Grid}}, Path=Grid.Row}"/>
-        <Button BackgroundColor="White"  Grid.Row="0" Grid.Column="1" Clicked="TileClicked" CommandParameter=""/>
-        <Button BackgroundColor="White"  Grid.Row="0" Grid.Column="2" Clicked="TileClicked" CommandParameter="0,2"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="0" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="1" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="2" Clicked="TileClicked"/>
 
-        <Button BackgroundColor="White"  Grid.Row="1" Grid.Column="0" Clicked="TileClicked" CommandParameter="1,0"/>
-        <Button BackgroundColor="White"  Grid.Row="1" Grid.Column="1" Clicked="TileClicked" CommandParameter="1,1"/>
-        <Button BackgroundColor="White"  Grid.Row="1" Grid.Column="2" Clicked="TileClicked" CommandParameter="1,2"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="0" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="1" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="1" Grid.Column="2" Clicked="TileClicked"/>
 
-        <Button BackgroundColor="White"  Grid.Row="2" Grid.Column="0" Clicked="TileClicked" CommandParameter="2,0"/>
-        <Button BackgroundColor="White"  Grid.Row="2" Grid.Column="1" Clicked="TileClicked" CommandParameter="2,1"/>
-        <Button BackgroundColor="White"  Grid.Row="2" Grid.Column="2" Clicked="TileClicked" CommandParameter="2,2"/>
-
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="0" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="1" Clicked="TileClicked"/>
+        <Button Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="2" Grid.Column="2" Clicked="TileClicked"/>
 
     </Grid>
 

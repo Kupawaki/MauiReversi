@@ -16,18 +16,27 @@ namespace MauiReversi
         private void TileClicked(object sender, EventArgs e)
         {
             Button button = sender as Button;
-            Debug.WriteLine(grid.GetColumn(button));
-            Debug.WriteLine(grid.GetRow(button));
+            //Debug.WriteLine(grid.GetColumn(button));
+            //Debug.WriteLine(grid.GetRow(button));
 
-            if(turn == 0)
+            if (button.Text == "")
             {
-                button.BackgroundColor = colors[turn];
-                turn = 1;
+                if (turn == 0)
+                {
+                    button.BackgroundColor = colors[turn];
+                    button.Text = colors[turn].ToString();
+                    turn = 1;
+                }
+                else
+                {
+                    button.BackgroundColor = colors[turn];
+                    button.Text = colors[turn].ToString();
+                    turn = 0;
+                }
             }
             else
             {
-                button.BackgroundColor = colors[turn];
-                turn = 0;
+                Debug.WriteLine("You cant play here");
             }
         }
     }
