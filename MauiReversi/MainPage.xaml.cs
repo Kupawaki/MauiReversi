@@ -42,6 +42,8 @@ namespace MauiReversi
         private void TileClicked(object sender, EventArgs e)
         {
 
+            Debug.WriteLine(grid.ElementAt(0));
+
             Button button = sender as Button;
             //Debug.WriteLine(grid.GetColumn(button));
             //Debug.WriteLine(grid.GetRow(button));
@@ -75,6 +77,91 @@ namespace MauiReversi
                 b.BackgroundColor = Color.FromRgb(255, 255, 255);
                 turn = 0;
             }
+        }
+
+        private void GenerateGrid(object sender, EventArgs e)
+        {
+            Grid grid = new()
+            {
+                RowDefinitions =
+                {
+                    new RowDefinition { Height = new GridLength(50) },
+                    new RowDefinition { Height = new GridLength(50) },
+                    new RowDefinition { Height = new GridLength(50) },
+                    new RowDefinition { Height = new GridLength(50) },
+                    new RowDefinition { Height = new GridLength(50) }
+                },
+                ColumnDefinitions =
+                {
+                    new ColumnDefinition { Width = new GridLength(50) },
+                    new ColumnDefinition { Width = new GridLength(50) },
+                    new ColumnDefinition { Width = new GridLength(50) },
+                    new ColumnDefinition { Width = new GridLength(50) },
+                    new ColumnDefinition { Width = new GridLength(50) }
+                }
+            };
+
+            grid.ElementAt(0);
+
+            grid.Add(new BoxView
+            {
+                Color = Colors.Blue,
+            }, 1, 0);
+            grid.Add(new Label
+            {
+                Text = "Row 0, Column 1",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            }, 1, 0);
+
+            // Row 1
+            // This BoxView and Label are in row 1 and column 0, which are specified as arguments
+            // to the Add method overload.
+            grid.Add(new BoxView
+            {
+                Color = Colors.Teal
+            }, 0, 1);
+            grid.Add(new Label
+            {
+                Text = "Row 1, Column 0",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            }, 0, 1);
+
+            // This BoxView and Label are in row 1 and column 1, which are specified as arguments
+            // to the Add method overload.
+            grid.Add(new BoxView
+            {
+                Color = Colors.Purple
+            }, 1, 1);
+            grid.Add(new Label
+            {
+                Text = "Row1, Column 1",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            }, 1, 1);
+
+            // Row 2
+            // Alternatively, the BoxView and Label can be positioned in cells with the Grid.SetRow
+            // and Grid.SetColumn methods.
+
+            BoxView boxView = new BoxView { Color = Colors.Red };
+            Grid.SetRow(boxView, 2);
+            Grid.SetColumnSpan(boxView, 2);
+            Label label = new Label
+            {
+                Text = "Row 2, Column 0 and 1",
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+            Grid.SetRow(label, 2);
+            Grid.SetColumnSpan(label, 2);
+
+            grid.Add(boxView);
+            grid.Add(label);
+
+            Title = "Basic Grid demo";
+            Content = grid;
         }
     }
 }
