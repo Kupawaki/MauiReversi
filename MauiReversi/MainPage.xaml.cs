@@ -8,30 +8,44 @@ namespace MauiReversi
         private int turn = 0;
         private Color[] colors = { Color.FromRgb(255,50,50), Color.FromRgb(50,255,50) };
 
-        private Button[,] tiles = new Button[3,3];
+        //Grid generation vars
+        private Grid grid;
+        private int gridSize;
+        private int gridSpacing;
+        private int tileSize;
+
+        //Button interaction vars
+        private Button[,] tiles;
+
 
         public MainPage()
         {
             InitializeComponent();
-            fillTileArray();
             update();
         }
 
         private void fillTileArray()
         {
-            Debug.WriteLine(grid.Children.ToArray());
+            int r = 0;
+            int c = 0;
+            tiles = new Button[gridSize, gridSize];
+            for (int i = 0; i < gridSize * gridSize; i++)
+            {
+                //Debug.WriteLine((grid.ElementAt(i) as Button).Text);
+                tiles[r, c] = grid.ElementAt(i) as Button;
 
-            tiles[0,0] = b00;
-            tiles[0,1] = b01;
-            tiles[0,2] = b02;
+                if(c == gridSize)
+                {
+                    r++;
+                    c = 0;
+                }
+                else
+                {
+                    c++;
+                }
+            }
 
-            tiles[1,0] = b10;
-            tiles[1,1] = b11;
-            tiles[1,2] = b12;
-
-            tiles[2,0] = b20;
-            tiles[2,1] = b21;
-            tiles[2,2] = b22;
+            //TODO - Finish up this logic by printing the contents of the tiles array
         }
 
         private void update()
@@ -42,7 +56,7 @@ namespace MauiReversi
         private void TileClicked(object sender, EventArgs e)
         {
 
-            Debug.WriteLine(grid.ElementAt(0));
+            //Debug.WriteLine((grid.ElementAt(0) as Button).Text);
 
             Button button = sender as Button;
             //Debug.WriteLine(grid.GetColumn(button));
@@ -79,89 +93,77 @@ namespace MauiReversi
             }
         }
 
-        private void GenerateGrid(object sender, EventArgs e)
+        private void LoopButt(object sender, EventArgs e)
         {
-            Grid grid = new()
+            int x = 0;
+            //var parent = grid.Children;
+
+            //foreach(var z in parent)
+            //{
+            //    Debug.WriteLine(z);
+           // }
+        }
+
+        private async void GenerateGrid(object sender, EventArgs e)
+        {
+            //Grab generation vars
+            try
             {
-                RowDefinitions =
+                gridSize = Int16.Parse(gridSizeET.Text);
+                gridSpacing = Int16.Parse(gridSpacingET.Text);
+                tileSize = Int16.Parse(tileSizeET.Text);
+            }
+            catch(Exception ex)
+            {
+                await DisplayAlert("Error", ex.ToString(), "K");
+            }
+
+
+            //Make a new instance of a grid element
+            grid = new()
+            {
+                //Give it its stylings
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                ColumnSpacing = gridSpacing,
+                RowSpacing = gridSpacing
+            };
+
+            //Give it its row and column definitions
+            for (int i = 0; i < gridSize; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(tileSize) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(tileSize) });
+            }
+
+            int row = 0;
+            int col = 0;
+
+            //Add the button elements to the grid
+            for (int i = 0; i < (gridSize * gridSize); i++)
+            {
+                grid.Add(new Button
                 {
-                    new RowDefinition { Height = new GridLength(50) },
-                    new RowDefinition { Height = new GridLength(50) },
-                    new RowDefinition { Height = new GridLength(50) },
-                    new RowDefinition { Height = new GridLength(50) },
-                    new RowDefinition { Height = new GridLength(50) }
-                },
-                ColumnDefinitions =
+                    BackgroundColor = Colors.White,
+                    TextColor = Colors.Black,
+                    Text = $"{row}{col}"
+                }, col, row);
+
+                if(col == (gridSize-1))
                 {
-                    new ColumnDefinition { Width = new GridLength(50) },
-                    new ColumnDefinition { Width = new GridLength(50) },
-                    new ColumnDefinition { Width = new GridLength(50) },
-                    new ColumnDefinition { Width = new GridLength(50) },
-                    new ColumnDefinition { Width = new GridLength(50) }
+                    row++;
+                    col = 0;
                 }
-            };
+                else
+                {
+                    col++;
+                }
+            }
 
-            grid.ElementAt(0);
+            //Add the grid to the page
+            holder.Add(grid);
 
-            grid.Add(new BoxView
-            {
-                Color = Colors.Blue,
-            }, 1, 0);
-            grid.Add(new Label
-            {
-                Text = "Row 0, Column 1",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
-            }, 1, 0);
-
-            // Row 1
-            // This BoxView and Label are in row 1 and column 0, which are specified as arguments
-            // to the Add method overload.
-            grid.Add(new BoxView
-            {
-                Color = Colors.Teal
-            }, 0, 1);
-            grid.Add(new Label
-            {
-                Text = "Row 1, Column 0",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
-            }, 0, 1);
-
-            // This BoxView and Label are in row 1 and column 1, which are specified as arguments
-            // to the Add method overload.
-            grid.Add(new BoxView
-            {
-                Color = Colors.Purple
-            }, 1, 1);
-            grid.Add(new Label
-            {
-                Text = "Row1, Column 1",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
-            }, 1, 1);
-
-            // Row 2
-            // Alternatively, the BoxView and Label can be positioned in cells with the Grid.SetRow
-            // and Grid.SetColumn methods.
-
-            BoxView boxView = new BoxView { Color = Colors.Red };
-            Grid.SetRow(boxView, 2);
-            Grid.SetColumnSpan(boxView, 2);
-            Label label = new Label
-            {
-                Text = "Row 2, Column 0 and 1",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
-            };
-            Grid.SetRow(label, 2);
-            Grid.SetColumnSpan(label, 2);
-
-            grid.Add(boxView);
-            grid.Add(label);
-
-            Title = "Basic Grid demo";
-            Content = grid;
+            fillTileArray();
         }
     }
 }

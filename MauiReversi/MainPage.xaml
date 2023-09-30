@@ -5,20 +5,30 @@
     <VerticalStackLayout>
         <Label x:Name="turnLB" FontSize="25" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,0,0,50"/>
 
+
+        <StackLayout x:Name="holder"></StackLayout>
+        <!--
         <Grid x:Name="grid" HorizontalOptions="Center" VerticalOptions="Center" 
-        RowSpacing="3" ColumnSpacing="3" RowDefinitions="50,50,50,50,50" ColumnDefinitions="50,50,50,50,50">
+        RowSpacing="3" ColumnSpacing="3" RowDefinitions="50,50" ColumnDefinitions="50,50">
 
-            <Button x:Name="b00" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="0" Clicked="TileClicked"/>
-            <Button x:Name="b01" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="1" Clicked="TileClicked"/>
-            <Button x:Name="b02" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="2" Clicked="TileClicked"/>
-            <Button x:Name="b03" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="3" Clicked="TileClicked"/>
-            <Button x:Name="b04" Text="" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF"  Grid.Row="0" Grid.Column="4" Clicked="TileClicked"/>
+            <Button x:Name="b00" Text="a" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF" Grid.Row="0" Grid.Column="0" Clicked="TileClicked"/>
+            <Button x:Name="b01" Text="b" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF" Grid.Row="0" Grid.Column="1" Clicked="TileClicked"/>
+            <Button x:Name="b02" Text="c" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF" Grid.Row="0" Grid.Column="2" Clicked="TileClicked"/>
+            <Button x:Name="b03" Text="d" TextColor="{Binding Source={RelativeSource Self}, Path=BackgroundColor}" BackgroundColor="#FFFFFF" Grid.Row="0" Grid.Column="3" Clicked="TileClicked"/>
+
         </Grid>
+        -->
 
-        <HorizontalStackLayout>
-            <Button x:Name="generateBTN" Text="Generate Grid" VerticalOptions="Center" HorizontalOptions="Center" Clicked="GenerateGrid"/>
+        <HorizontalStackLayout HorizontalOptions="Center">
+            <Button x:Name="generateBTN" Text="Generate Grid" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,20,0,0" Clicked="GenerateGrid"/>
             <Button x:Name="resetBTN" Text="Reset" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,20,0,0" Clicked="ResetGame"/>
         </HorizontalStackLayout>
+
+        <VerticalStackLayout HorizontalOptions="Center">
+            <Entry x:Name="gridSizeET" Placeholder="Grid Size"></Entry>
+            <Entry x:Name="gridSpacingET" Placeholder="Grid Spacing"></Entry>
+            <Entry x:Name="tileSizeET" Placeholder="Tile Size"></Entry>
+        </VerticalStackLayout>
         
     </VerticalStackLayout>
 
