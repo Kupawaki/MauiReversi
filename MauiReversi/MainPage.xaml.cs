@@ -21,87 +21,40 @@ namespace MauiReversi
         public MainPage()
         {
             InitializeComponent();
-            update();
         }
 
         private void fillTileArray()
         {
+            Debug.WriteLine("Filling array");
+
             int r = 0;
             int c = 0;
             tiles = new Button[gridSize, gridSize];
-            for (int i = 0; i < gridSize * gridSize; i++)
+            for (int i = 0; i < (gridSize * gridSize); i++)
             {
-                //Debug.WriteLine((grid.ElementAt(i) as Button).Text);
-                tiles[r, c] = grid.ElementAt(i) as Button;
+                //Debug.WriteLine($"grid at i is {(grid.ElementAt(i) as Button).Text}");
+                //tiles[r, c] = grid.ElementAt(i) as Button;
+
+                //Debug.WriteLine($"FTA: i={i}, r={r}, c={c}");
 
                 if(c == gridSize)
                 {
                     r++;
                     c = 0;
+
+                    //Debug.WriteLine($"c was == to {gridSize} and is now {c} and r is {r}");
                 }
                 else
                 {
                     c++;
+                    //Debug.WriteLine($"c was != {gridSize} and is now {c}");
                 }
             }
 
-            //TODO - Finish up this logic by printing the contents of the tiles array
-        }
+            //Debug.WriteLine(tiles.Length);
 
-        private void update()
-        {
-            turnLB.Text = $"Player {turn + 1}'s turn";
-        }
-
-        private void TileClicked(object sender, EventArgs e)
-        {
-
-            //Debug.WriteLine((grid.ElementAt(0) as Button).Text);
-
-            Button button = sender as Button;
-            //Debug.WriteLine(grid.GetColumn(button));
-            //Debug.WriteLine(grid.GetRow(button));
-
-            if (button.Text == "")
-            {
-                if (turn == 0)
-                {
-                    button.BackgroundColor = colors[turn];
-                    button.Text = " ";
-                    turn = 1;
-                }
-                else
-                {
-                    button.BackgroundColor = colors[turn];
-                    button.Text = " ";
-                    turn = 0;
-                }
-            }
-            else
-            {
-                Debug.WriteLine("You cant play here");
-            }
-        }
-
-        private void ResetGame(object sender, EventArgs e)
-        {
-            foreach (Button b in tiles)
-            {
-                b.Text = "";
-                b.BackgroundColor = Color.FromRgb(255, 255, 255);
-                turn = 0;
-            }
-        }
-
-        private void LoopButt(object sender, EventArgs e)
-        {
-            int x = 0;
-            //var parent = grid.Children;
-
-            //foreach(var z in parent)
-            //{
-            //    Debug.WriteLine(z);
-           // }
+            tiles[0, 0] = grid.ElementAt(0) as Button;
+            Debug.WriteLine(tiles[0, 0].Text);
         }
 
         private async void GenerateGrid(object sender, EventArgs e)
@@ -165,5 +118,55 @@ namespace MauiReversi
 
             fillTileArray();
         }
+
+        //Playability functions.................................................
+
+        private void ResetGame(object sender, EventArgs e)
+        {
+            foreach (Button b in tiles)
+            {
+                b.Text = "";
+                b.BackgroundColor = Color.FromRgb(255, 255, 255);
+                turn = 0;
+            }
+        }
+
+        private void TileClicked(object sender, EventArgs e)
+        {
+
+            //Debug.WriteLine((grid.ElementAt(0) as Button).Text);
+
+            Button button = sender as Button;
+            //Debug.WriteLine(grid.GetColumn(button));
+            //Debug.WriteLine(grid.GetRow(button));
+
+            if (button.Text == "")
+            {
+                if (turn == 0)
+                {
+                    button.BackgroundColor = colors[turn];
+                    button.Text = " ";
+                    turn = 1;
+                }
+                else
+                {
+                    button.BackgroundColor = colors[turn];
+                    button.Text = " ";
+                    turn = 0;
+                }
+            }
+            else
+            {
+                Debug.WriteLine("You cant play here");
+            }
+        }
+
+
+        //UI Management functions...............................................
+
+        //private void update()
+        //{
+        //    turnLB.Text = $"Player {turn + 1}'s turn";
+        //}
     }
 }
