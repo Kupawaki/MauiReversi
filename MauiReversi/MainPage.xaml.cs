@@ -11,7 +11,7 @@ namespace MauiReversi
         private int tileSize = 50;
 
         //Bound vars
-        int[] upperBounds;
+        int[] topBounds;
         int[] leftBounds;
         int[] rightBounds;
         int[] bottomBounds;
@@ -107,10 +107,10 @@ namespace MauiReversi
 
         private void findBounds()
         {
-            List<int> upperBoundsL = new List<int>();
+            List<int> topBoundsL = new List<int>();
             for (int i = 0; i < gridSize; i++)
             {
-                upperBoundsL.Add(i);
+                topBoundsL.Add(i);
             }
 
             List<int> leftBoundsL = new List<int>();
@@ -131,34 +131,34 @@ namespace MauiReversi
                 bottomBoundsL.Add(i);
             }
 
-            upperBounds = upperBoundsL.ToArray();
+            topBounds = topBoundsL.ToArray();
             leftBounds = leftBoundsL.ToArray();
             rightBounds = rightBoundsL.ToArray();
             bottomBounds = bottomBoundsL.ToArray();
 
-            foreach (int x in upperBounds)
-            {
-                Debug.WriteLine(x);
-            }
-            Debug.WriteLine("");
+            //foreach (int x in topBounds)
+            //{
+            //    Debug.WriteLine(x);
+            //}
+            //Debug.WriteLine("");
 
-            foreach (int x in leftBounds)
-            {
-                Debug.WriteLine(x);
-            }
-            Debug.WriteLine("");
+            //foreach (int x in leftBounds)
+            //{
+            //    Debug.WriteLine(x);
+            //}
+            //Debug.WriteLine("");
 
-            foreach (int x in rightBounds)
-            {
-                Debug.WriteLine(x);
-            }
-            Debug.WriteLine("");
+            //foreach (int x in rightBounds)
+            //{
+            //    Debug.WriteLine(x);
+            //}
+            //Debug.WriteLine("");
 
-            foreach (int x in bottomBounds)
-            {
-                Debug.WriteLine(x);
-            }
-            Debug.WriteLine("");
+            //foreach (int x in bottomBounds)
+            //{
+            //    Debug.WriteLine(x);
+            //}
+            //Debug.WriteLine("");
         }
 
 
@@ -172,40 +172,16 @@ namespace MauiReversi
             int r = grid.GetRow(button);
             int literalIndex = ((r * gridSize) + c);
 
-            Debug.WriteLine($"Row: {r} and col: {c}");
-            Debug.WriteLine($"Literal Index: {literalIndex}");
-            Debug.WriteLine($"Text: {(grid.ElementAt(literalIndex) as Button).Text}");
-            Debug.WriteLine("");
+            //Debug.WriteLine($"Row: {r} and col: {c}");
+            //Debug.WriteLine($"Literal Index: {literalIndex}");
+            //Debug.WriteLine($"Text: {(grid.ElementAt(literalIndex) as Button).Text}");
+            //Debug.WriteLine("");
 
-            int left = literalIndex;
-            try
-            {
-                if (leftBounds.Contains(left))
-                {
-                    Debug.WriteLine("Tile is the left bound");
-                    return;
-                }
-                else
-                {
-                    while (!leftBounds.Contains(left))
-                    {
-                        left -= 1;
-                        if (leftBounds.Contains(left))
-                        {
-                            Debug.WriteLine($"Left Bound: {(grid.ElementAt(left) as Button).Text}");
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Still looking: {(grid.ElementAt(left) as Button).Text}");
-                        }
-                    }
-                }
-            }
-            catch(IndexOutOfRangeException ex)
-            {
-                Debug.WriteLine(ex.Message);
-            }
+            findLeftBound(c, r, literalIndex);
+            findRightBound(c, r, literalIndex);
+            findTopBounds(c, r, literalIndex);
+            findBottomBound(c, r, literalIndex);
+         
             
 
             //if (button.Text == "")
@@ -228,6 +204,151 @@ namespace MauiReversi
             //    Debug.WriteLine("You cant play here");
             //}
         }
+
+        private void findLeftBound(int c, int r, int literalIndex)
+        {
+            Debug.WriteLine("Finding left bound..............................");
+
+            int left = literalIndex;
+            try
+            {
+                if (leftBounds.Contains(left))
+                {
+                    Debug.WriteLine("Tile is the left bound");
+                    return;
+                }
+                else
+                {
+                    while (!leftBounds.Contains(left))
+                    {
+                        left -= 1;
+                        if (leftBounds.Contains(left))
+                        {
+                            Debug.WriteLine($"Left Bound: {(grid.ElementAt(left) as Button).Text}");
+                            Debug.WriteLine("");
+                            return;
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Still looking: {(grid.ElementAt(left) as Button).Text}");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in LEFT");
+            }
+        }
+
+        private void findRightBound(int c, int r, int literalIndex)
+        {
+            Debug.WriteLine("Finding right bound..............................");
+
+            int right = literalIndex;
+            try
+            {
+                if (rightBounds.Contains(right))
+                {
+                    Debug.WriteLine("Tile is the right bound");
+                    return;
+                }
+                else
+                {
+                    while (!rightBounds.Contains(right))
+                    {
+                        right += 1;
+                        if (rightBounds.Contains(right))
+                        {
+                            Debug.WriteLine($"Right Bound: {(grid.ElementAt(right) as Button).Text}");
+                            Debug.WriteLine("");
+                            return;
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Still looking: {(grid.ElementAt(right) as Button).Text}");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in RIGHT");
+            }
+        }
+
+        private void findTopBounds(int c, int r, int literalIndex)
+        {
+            Debug.WriteLine("Finding top bound..............................");
+
+            int top = literalIndex;
+            try
+            {
+                if (topBounds.Contains(top))
+                {
+                    Debug.WriteLine("Tile is the top bound");
+                    return;
+                }
+                else
+                {
+                    while (!topBounds.Contains(top))
+                    {
+                        top -= gridSize;
+                        if (topBounds.Contains(top))
+                        {
+                            Debug.WriteLine($"Top Bound: {(grid.ElementAt(top) as Button).Text}");
+                            Debug.WriteLine("");
+                            return;
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Still looking: {(grid.ElementAt(top) as Button).Text}");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in TOP");
+            }
+        }
+
+        private void findBottomBound(int c, int r, int literalIndex)
+        {
+            Debug.WriteLine("Finding top bound..............................");
+
+            int bottom = literalIndex;
+            try
+            {
+                if (bottomBounds.Contains(bottom))
+                {
+                    Debug.WriteLine("Tile is the bottom bound");
+                    return;
+                }
+                else
+                {
+                    while (!bottomBounds.Contains(bottom))
+                    {
+                        bottom += gridSize;
+                        if (bottomBounds.Contains(bottom))
+                        {
+                            Debug.WriteLine($"Bottom Bound: {(grid.ElementAt(bottom) as Button).Text}");
+                            Debug.WriteLine("");
+                            return;
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Still looking: {(grid.ElementAt(bottom) as Button).Text}");
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in BOTTOM");
+            }
+        }
+
 
         private void ResetGame(object sender, EventArgs e)
         {
