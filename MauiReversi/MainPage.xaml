@@ -23,8 +23,10 @@
             <Button x:Name="generateBTN" Text="Generate Grid" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,20,0,0" Clicked="GenerateGrid"/>
             <Button x:Name="resetBTN" Text="Reset" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,20,0,0" Clicked="ResetGame"/>
             <Entry x:Name="gridSizeET" Placeholder="Grid Size" VerticalOptions="Center"></Entry>
+            <!--
             <Entry x:Name="gridSpacingET" Placeholder="Grid Spacing" VerticalOptions="Center"></Entry>
             <Entry x:Name="tileSizeET" Placeholder="Tile Size" VerticalOptions="Center"></Entry>
+            -->
         </HorizontalStackLayout>
 
     </VerticalStackLayout>
