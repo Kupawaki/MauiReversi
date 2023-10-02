@@ -97,6 +97,94 @@ namespace MauiReversi
 
             //Add the grid to the page
             holder.Add(grid);
+
+            findBounds();
+        }
+
+        private void findBounds()
+        {
+            //For 3
+
+            //0,1,2
+            //3,4,5
+            //6,7,8
+
+            //For 4
+
+            //0, 1, 2, 3
+            //4, 5, 6, 7
+            //8, 9, 10,11
+            //12,13,14,15
+
+            //For 5
+
+            //0, 1, 2, 3, 4
+            //5, 6, 7, 8, 9
+            //10,11,12,13,14
+            //15,16,17,18,19
+            //20,21,22,23,24
+
+            //For 6
+
+            //0, 1, 2, 3, 4, 5
+            //6, 7, 8, 9, 10,11
+            //12,13,14,15,16,17
+            //18,19,20,21,22,23
+            //24,25,26,27,28,29
+            //30,31,32,33,34,35
+
+            List<int> upperBoundsL = new List<int>();
+            for (int i = 0; i < gridSize; i++)
+            {
+                upperBoundsL.Add(i);
+            }
+
+            List<int> leftBoundsL = new List<int>();
+            for (int i = 0; i <= ((gridSize * gridSize) - gridSize); i += gridSize)
+            {
+                leftBoundsL.Add(i);
+            }
+
+            List<int> rightBoundsL = new List<int>();
+            for (int i = gridSize - 1; i <= ((gridSize * gridSize) - 1); i += gridSize)
+            {
+                rightBoundsL.Add(i);
+            }
+
+            List<int> bottomBoundsL = new List<int>();
+            for (int i = (gridSize * gridSize) - gridSize; i <= ((gridSize * gridSize) - 1); i++)
+            {
+                bottomBoundsL.Add(i);
+            }
+
+            int[] upperBounds = upperBoundsL.ToArray();
+            int[] leftBounds = leftBoundsL.ToArray();
+            int[] rightBounds = rightBoundsL.ToArray();
+            int[] bottomBounds = bottomBoundsL.ToArray();
+
+            foreach(int x in upperBounds)
+            {
+                Debug.WriteLine(x);
+            }
+            Debug.WriteLine("");
+
+            foreach (int x in leftBounds)
+            {
+                Debug.WriteLine(x);
+            }
+            Debug.WriteLine("");
+
+            foreach (int x in rightBounds)
+            {
+                Debug.WriteLine(x);
+            }
+            Debug.WriteLine("");
+
+            foreach (int x in bottomBounds)
+            {
+                Debug.WriteLine(x);
+            }
+            Debug.WriteLine("");
         }
 
 
