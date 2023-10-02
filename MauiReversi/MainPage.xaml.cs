@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Windows.Input;
 
 namespace MauiReversi
 {
@@ -23,42 +22,21 @@ namespace MauiReversi
             InitializeComponent();
         }
 
-        private void fillTileArray()
-        {
-            Debug.WriteLine("Filling array");
-
-            int r = 0;
-            int c = 0;
-            tiles = new Button[gridSize, gridSize];
-            for (int i = 0; i < (gridSize * gridSize); i++)
-            {
-                //Debug.WriteLine($"grid at i is {(grid.ElementAt(i) as Button).Text}");
-                //tiles[r, c] = grid.ElementAt(i) as Button;
-
-                //Debug.WriteLine($"FTA: i={i}, r={r}, c={c}");
-
-                if(c == gridSize)
-                {
-                    r++;
-                    c = 0;
-
-                    //Debug.WriteLine($"c was == to {gridSize} and is now {c} and r is {r}");
-                }
-                else
-                {
-                    c++;
-                    //Debug.WriteLine($"c was != {gridSize} and is now {c}");
-                }
-            }
-
-            //Debug.WriteLine(tiles.Length);
-
-            tiles[0, 0] = grid.ElementAt(0) as Button;
-            Debug.WriteLine(tiles[0, 0].Text);
-        }
+        //Setup functions.......................................................
 
         private async void GenerateGrid(object sender, EventArgs e)
         {
+            //Disable the generate button and grid stats
+            generateBTN.IsEnabled = false;
+            gridSizeET.IsEnabled = false;
+            gridSpacingET.IsEnabled = false;
+            tileSizeET.IsEnabled = false;
+
+            generateBTN.IsVisible = false;
+            gridSizeET.IsVisible = false;
+            gridSpacingET.IsVisible = false;
+            tileSizeET.IsVisible = false;
+
             //Grab generation vars
             try
             {
@@ -92,15 +70,19 @@ namespace MauiReversi
             int row = 0;
             int col = 0;
 
+
             //Add the button elements to the grid
             for (int i = 0; i < (gridSize * gridSize); i++)
             {
-                grid.Add(new Button
+                Button b = new Button
                 {
                     BackgroundColor = Colors.White,
                     TextColor = Colors.Black,
                     Text = $"{row}{col}"
-                }, col, row);
+                };
+                b.Clicked += TileClicked;
+
+                grid.Add(b, col, row);
 
                 if(col == (gridSize-1))
                 {
@@ -115,30 +97,63 @@ namespace MauiReversi
 
             //Add the grid to the page
             holder.Add(grid);
-
-            fillTileArray();
         }
+
 
         //Playability functions.................................................
 
-        private void ResetGame(object sender, EventArgs e)
-        {
-            foreach (Button b in tiles)
-            {
-                b.Text = "";
-                b.BackgroundColor = Color.FromRgb(255, 255, 255);
-                turn = 0;
-            }
-        }
-
         private void TileClicked(object sender, EventArgs e)
         {
-
-            //Debug.WriteLine((grid.ElementAt(0) as Button).Text);
-
             Button button = sender as Button;
-            //Debug.WriteLine(grid.GetColumn(button));
-            //Debug.WriteLine(grid.GetRow(button));
+
+            int c = grid.GetColumn(button);
+            int r = grid.GetRow(button);
+            int literalIndex = ((r * gridSize) + c);
+
+            Debug.WriteLine($"This button is at row {r} and col {c}");
+            Debug.WriteLine($"Literal Index is {literalIndex}");
+            Debug.WriteLine($"The tex of this button should be {(grid.ElementAt(literalIndex) as Button).Text}");
+
+            Debug.WriteLine($"Left is {(grid.ElementAt(literalIndex - 1) as Button).Text}");
+            Debug.WriteLine($"Right is {(grid.ElementAt(literalIndex + 1) as Button).Text}");
+            Debug.WriteLine($"Top is {1}");
+            Debug.WriteLine($"Bottom is {1}");
+
+            try
+            {
+                Debug.WriteLine($"Left is {(grid.ElementAt(literalIndex - 1) as Button).Text}");
+            }
+            catch (IndexOutOfRangeException) 
+            {
+                Debug.WriteLine($"Left is N/A");
+            }
+
+            try
+            {
+                Debug.WriteLine($"Right is {(grid.ElementAt(literalIndex + 1) as Button).Text}");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Debug.WriteLine($"Right is N/A");
+            }
+
+            try
+            {
+                Debug.WriteLine($"Top is {1}");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Debug.WriteLine($"Top is N/A");
+            }
+
+            try
+            {
+                Debug.WriteLine($"Bottom is {1}");
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Debug.WriteLine($"Bottom is N/A");
+            }
 
             if (button.Text == "")
             {
@@ -161,6 +176,22 @@ namespace MauiReversi
             }
         }
 
+        private void ResetGame(object sender, EventArgs e)
+        {
+            //Turn on the generate button and grid stats
+            generateBTN.IsEnabled = true;
+            gridSizeET.IsEnabled = true;
+            gridSpacingET.IsEnabled = true;
+            tileSizeET.IsEnabled = true;
+
+            generateBTN.IsVisible = true;
+            gridSizeET.IsVisible = true;
+            gridSpacingET.IsVisible = true;
+            tileSizeET.IsVisible = true;
+
+            //Delete the grid
+            holder.Remove(grid);
+        }
 
         //UI Management functions...............................................
 
