@@ -15,6 +15,9 @@ namespace MauiReversi
         int[] leftBounds;
         int[] rightBounds;
         int[] bottomBounds;
+        int[] declaredBounds;
+
+        int operatorCode;
 
         //UI vars
         private int turn = 0;
@@ -177,12 +180,10 @@ namespace MauiReversi
             //Debug.WriteLine($"Text: {(grid.ElementAt(literalIndex) as Button).Text}");
             //Debug.WriteLine("");
 
-            findLeftBound(c, r, literalIndex);
-            findRightBound(c, r, literalIndex);
-            findTopBounds(c, r, literalIndex);
-            findBottomBound(c, r, literalIndex);
-         
-            
+            findBounds(c, r, literalIndex, "top");
+            findBounds(c, r, literalIndex, "left");
+            findBounds(c, r, literalIndex, "right");
+            findBounds(c, r, literalIndex, "bottom");
 
             //if (button.Text == "")
             //{
@@ -349,19 +350,76 @@ namespace MauiReversi
             }
         }
 
+        private void findBounds(int c, int r, int literalIndex, string dir)
+        {
+            switch(dir)
+            {
+                case "top":
+                    declaredBounds = topBounds;
+                    operatorCode = 1;
+                    break;
+                case "left":
+                    declaredBounds = leftBounds;
+                    operatorCode = 2;
+                    break;
+                case "right":
+                    declaredBounds = rightBounds;
+                    operatorCode = 3;
+                    break;
+                case "bottom":
+                    declaredBounds = bottomBounds;
+                    operatorCode = 4;
+                    break;
+            }
+
+            if(declaredBounds.Contains(literalIndex))
+            {
+                Debug.WriteLine("Tile is the bottom bound");
+                return;
+            }
+            else
+            {
+                while (!declaredBounds.Contains(literalIndex))
+                {
+                    switch(operatorCode)
+                    {
+                        case 1:
+                            literalIndex -= gridSize;
+                            break;
+                        case 2:
+                            literalIndex -= 1;
+                            break;
+                        case 3:
+                            literalIndex += 1;
+                            break;
+                        case 4:
+                            literalIndex += gridSize;
+                            break;
+                    }
+
+                    if (declaredBounds.Contains(literalIndex))
+                    {
+                        Debug.WriteLine($"{dir} bound: {(grid.ElementAt(literalIndex) as Button).Text}");
+                        Debug.WriteLine("");
+                        return;
+                    }
+                    else
+                    {
+                        Debug.WriteLine($"Still looking: {(grid.ElementAt(literalIndex) as Button).Text}");
+                    }
+                }
+            }
+        }
+
 
         private void ResetGame(object sender, EventArgs e)
         {
             //Turn on the generate button and grid stats
             generateBTN.IsEnabled = true;
             gridSizeET.IsEnabled = true;
-            //gridSpacingET.IsEnabled = true;
-            //tileSizeET.IsEnabled = true;
 
             generateBTN.IsVisible = true;
             gridSizeET.IsVisible = true;
-            //gridSpacingET.IsVisible = true;
-            //tileSizeET.IsVisible = true;
 
             //Delete the grid
             holder.Remove(grid);
