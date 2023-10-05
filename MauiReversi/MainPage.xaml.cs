@@ -7,21 +7,28 @@ namespace MauiReversi
         //Grid generation vars
         private Grid grid;
         private int gridSize;
-        private int gridSpacing = 5;
-        private int tileSize = 50;
+        private readonly int gridSpacing = 5;
+        private readonly int tileSize = 50;
 
-        //Bound vars
-        int[] topBounds;
-        int[] leftBounds;
-        int[] rightBounds;
-        int[] bottomBounds;
-        int[] declaredBounds;
+        //Vars for tracking grid boundaries
+        List<int> topBounds;
+        List<int> rightBounds;
+        List<int> bottomBounds;
+        List<int> leftBounds;
 
-        int operatorCode;
+        //Vars for clicking on a tile
+        int startingColumn;
+        int startingRow;
+        int startingIndex;
+
+        //Vars for processing moves
+        List<int> passedTiles;
+        int operatorCode = 1;
+        int operativeIndex;
 
         //UI vars
         private int turn = 0;
-        private Color[] colors = { Color.FromRgb(255, 50, 50), Color.FromRgb(50, 255, 50) };
+        private readonly Color[] colors = { Colors.Red, Colors.Green};
 
 
         public MainPage()
@@ -36,20 +43,14 @@ namespace MauiReversi
             //Disable the generate button and grid stats
             generateBTN.IsEnabled = false;
             gridSizeET.IsEnabled = false;
-            //gridSpacingET.IsEnabled = false;
-            //tileSizeET.IsEnabled = false;
 
             generateBTN.IsVisible = false;
             gridSizeET.IsVisible = false;
-            //gridSpacingET.IsVisible = false;
-            //tileSizeET.IsVisible = false;
 
             //Grab generation vars
             try
             {
                 gridSize = Int16.Parse(gridSizeET.Text);
-                //gridSpacing = Int16.Parse(gridSpacingET.Text);
-                //tileSize = Int16.Parse(tileSizeET.Text);
             }
             catch(Exception ex)
             {
@@ -81,7 +82,7 @@ namespace MauiReversi
             //Add the button elements to the grid
             for (int i = 0; i < (gridSize * gridSize); i++)
             {
-                Button b = new Button
+                Button b = new()
                 {
                     BackgroundColor = Colors.White,
                     TextColor = Colors.Black,
@@ -105,65 +106,44 @@ namespace MauiReversi
             //Add the grid to the page
             holder.Add(grid);
 
-            findBounds();
+            FindBounds();
         }
 
-        private void findBounds()
+        private void FindBounds()
         {
-            List<int> topBoundsL = new List<int>();
+            topBounds = new List<int>();
+            rightBounds = new List<int>();
+            bottomBounds = new List<int>();
+            leftBounds = new List<int>();
+            passedTiles = new List<int>();
+
+            //Top of grid
             for (int i = 0; i < gridSize; i++)
             {
-                topBoundsL.Add(i);
+                topBounds.Add(i);
             }
 
-            List<int> leftBoundsL = new List<int>();
-            for (int i = 0; i <= ((gridSize * gridSize) - gridSize); i += gridSize)
-            {
-                leftBoundsL.Add(i);
-            }
-
-            List<int> rightBoundsL = new List<int>();
+            //Right of grid
             for (int i = gridSize - 1; i <= ((gridSize * gridSize) - 1); i += gridSize)
             {
-                rightBoundsL.Add(i);
+                rightBounds.Add(i);
             }
 
-            List<int> bottomBoundsL = new List<int>();
+            //Bottom of grid
             for (int i = (gridSize * gridSize) - gridSize; i <= ((gridSize * gridSize) - 1); i++)
             {
-                bottomBoundsL.Add(i);
+                bottomBounds.Add(i);
             }
 
-            topBounds = topBoundsL.ToArray();
-            leftBounds = leftBoundsL.ToArray();
-            rightBounds = rightBoundsL.ToArray();
-            bottomBounds = bottomBoundsL.ToArray();
+            //Left of grid
+            for (int i = 0; i <= ((gridSize * gridSize) - gridSize); i += gridSize)
+            {
+                leftBounds.Add(i);
+            }
 
-            //foreach (int x in topBounds)
-            //{
-            //    Debug.WriteLine(x);
-            //}
-            //Debug.WriteLine("");
+            SetTiles();
 
-            //foreach (int x in leftBounds)
-            //{
-            //    Debug.WriteLine(x);
-            //}
-            //Debug.WriteLine("");
-
-            //foreach (int x in rightBounds)
-            //{
-            //    Debug.WriteLine(x);
-            //}
-            //Debug.WriteLine("");
-
-            //foreach (int x in bottomBounds)
-            //{
-            //    Debug.WriteLine(x);
-            //}
-            //Debug.WriteLine("");
         }
-
 
         //Playability functions.................................................
 
@@ -171,246 +151,173 @@ namespace MauiReversi
         {
             Button button = sender as Button;
 
-            int c = grid.GetColumn(button);
-            int r = grid.GetRow(button);
-            int literalIndex = ((r * gridSize) + c);
+            startingColumn = grid.GetColumn(button);
+            startingRow = grid.GetRow(button);
+            startingIndex = (startingRow * gridSize) + startingColumn;
 
-            //Debug.WriteLine($"Row: {r} and col: {c}");
-            //Debug.WriteLine($"Literal Index: {literalIndex}");
-            //Debug.WriteLine($"Text: {(grid.ElementAt(literalIndex) as Button).Text}");
-            //Debug.WriteLine("");
+            //Change the color of the tile we clicked
+            ChangeColor(startingIndex);
 
-            findBounds(c, r, literalIndex, "top");
-            findBounds(c, r, literalIndex, "left");
-            findBounds(c, r, literalIndex, "right");
-            findBounds(c, r, literalIndex, "bottom");
-
-            //if (button.Text == "")
-            //{
-            //    if (turn == 0)
-            //    {
-            //        button.BackgroundColor = colors[turn];
-            //        button.Text = " ";
-            //        turn = 1;
-            //    }
-            //    else
-            //    {
-            //        button.BackgroundColor = colors[turn];
-            //        button.Text = " ";
-            //        turn = 0;
-            //    }
-            //}
-            //else
-            //{
-            //    Debug.WriteLine("You cant play here");
-            //}
+            //Process what other tiles we need to change
+            ProcessMove(startingIndex);
         }
 
-        private void findLeftBound(int c, int r, int literalIndex)
+        private void ProcessMove(int currentIndex)
         {
-            Debug.WriteLine("Finding left bound..............................");
-
-            int left = literalIndex;
-            try
+            //Check the operator code to see where we are in the process
+            //If the operator code is 9 (not a valid code) then stop working
+            if (operatorCode == 9)
             {
-                if (leftBounds.Contains(left))
-                {
-                    Debug.WriteLine("Tile is the left bound");
-                    return;
-                }
-                else
-                {
-                    while (!leftBounds.Contains(left))
-                    {
-                        left -= 1;
-                        if (leftBounds.Contains(left))
-                        {
-                            Debug.WriteLine($"Left Bound: {(grid.ElementAt(left) as Button).Text}");
-                            Debug.WriteLine("");
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Still looking: {(grid.ElementAt(left) as Button).Text}");
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("Error in LEFT");
-            }
-        }
-
-        private void findRightBound(int c, int r, int literalIndex)
-        {
-            Debug.WriteLine("Finding right bound..............................");
-
-            int right = literalIndex;
-            try
-            {
-                if (rightBounds.Contains(right))
-                {
-                    Debug.WriteLine("Tile is the right bound");
-                    return;
-                }
-                else
-                {
-                    while (!rightBounds.Contains(right))
-                    {
-                        right += 1;
-                        if (rightBounds.Contains(right))
-                        {
-                            Debug.WriteLine($"Right Bound: {(grid.ElementAt(right) as Button).Text}");
-                            Debug.WriteLine("");
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Still looking: {(grid.ElementAt(right) as Button).Text}");
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("Error in RIGHT");
-            }
-        }
-
-        private void findTopBounds(int c, int r, int literalIndex)
-        {
-            Debug.WriteLine("Finding top bound..............................");
-
-            int top = literalIndex;
-            try
-            {
-                if (topBounds.Contains(top))
-                {
-                    Debug.WriteLine("Tile is the top bound");
-                    return;
-                }
-                else
-                {
-                    while (!topBounds.Contains(top))
-                    {
-                        top -= gridSize;
-                        if (topBounds.Contains(top))
-                        {
-                            Debug.WriteLine($"Top Bound: {(grid.ElementAt(top) as Button).Text}");
-                            Debug.WriteLine("");
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Still looking: {(grid.ElementAt(top) as Button).Text}");
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("Error in TOP");
-            }
-        }
-
-        private void findBottomBound(int c, int r, int literalIndex)
-        {
-            Debug.WriteLine("Finding top bound..............................");
-
-            int bottom = literalIndex;
-            try
-            {
-                if (bottomBounds.Contains(bottom))
-                {
-                    Debug.WriteLine("Tile is the bottom bound");
-                    return;
-                }
-                else
-                {
-                    while (!bottomBounds.Contains(bottom))
-                    {
-                        bottom += gridSize;
-                        if (bottomBounds.Contains(bottom))
-                        {
-                            Debug.WriteLine($"Bottom Bound: {(grid.ElementAt(bottom) as Button).Text}");
-                            Debug.WriteLine("");
-                            return;
-                        }
-                        else
-                        {
-                            Debug.WriteLine($"Still looking: {(grid.ElementAt(bottom) as Button).Text}");
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Debug.WriteLine("Error in BOTTOM");
-            }
-        }
-
-        private void findBounds(int c, int r, int literalIndex, string dir)
-        {
-            switch(dir)
-            {
-                case "top":
-                    declaredBounds = topBounds;
-                    operatorCode = 1;
-                    break;
-                case "left":
-                    declaredBounds = leftBounds;
-                    operatorCode = 2;
-                    break;
-                case "right":
-                    declaredBounds = rightBounds;
-                    operatorCode = 3;
-                    break;
-                case "bottom":
-                    declaredBounds = bottomBounds;
-                    operatorCode = 4;
-                    break;
-            }
-
-            if(declaredBounds.Contains(literalIndex))
-            {
-                Debug.WriteLine("Tile is the bottom bound");
+                Debug.WriteLine($"OPC is {operatorCode}! Should now return");
                 return;
             }
             else
             {
-                while (!declaredBounds.Contains(literalIndex))
+                //Find what operation to preform
+                switch (operatorCode)
                 {
-                    switch(operatorCode)
-                    {
-                        case 1:
-                            literalIndex -= gridSize;
-                            break;
-                        case 2:
-                            literalIndex -= 1;
-                            break;
-                        case 3:
-                            literalIndex += 1;
-                            break;
-                        case 4:
-                            literalIndex += gridSize;
-                            break;
-                    }
+                    //Move Top
+                    case 1:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex - gridSize;
 
-                    if (declaredBounds.Contains(literalIndex))
-                    {
-                        Debug.WriteLine($"{dir} bound: {(grid.ElementAt(literalIndex) as Button).Text}");
-                        Debug.WriteLine("");
-                        return;
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"Still looking: {(grid.ElementAt(literalIndex) as Button).Text}");
-                    }
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //Move TopRight
+                    case 2:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex - gridSize + 1;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //Right
+                    case 3:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex + 1;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //BottomRight
+                    case 4:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex + 1 + gridSize;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //Bottom
+                    case 5:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex + gridSize;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //BottomLeft
+                    case 6:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex + gridSize - 1;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //Left
+                    case 7:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex - 1;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
+                    //TopLeft
+                    case 8:
+                        Debug.WriteLine($"OPC is {operatorCode}!");
+                        operativeIndex = currentIndex - gridSize - 1;
+
+                        SeekTiles(currentIndex, operativeIndex);
+                        break;
+
                 }
             }
         }
 
+        private void SeekTiles(int currentIndex, int operativeIndex)
+        {
+            //The move we are about to make does not land us on a boundary tile
+            if (!topBounds.Contains(operativeIndex) && !rightBounds.Contains(operativeIndex))
+            {
+                Debug.WriteLine($"The move from {currentIndex} to {operativeIndex} is not an issue");
+
+                //Update current index to the new position
+                currentIndex = operativeIndex;
+
+                //If the color of the new tile is our color,
+                //Set the passed tiles to our color,
+                //update the operation and recursively call this function,
+                //with this starting index with a new operator
+                if (GetColor(currentIndex) == colors[turn])
+                {
+                    Debug.WriteLine("This new tile our color");
+                    SetColors();
+                    operatorCode++;
+                    ProcessMove(startingIndex);
+                }
+                //Otherwise add the tile to the list of passed tiles,
+                //and start again at the new tile
+                else
+                {
+                    Debug.WriteLine("This new tile is not out color");
+                    passedTiles.Add(currentIndex);
+                    ProcessMove(currentIndex);
+                }
+            }
+            //The move does land us on a boundary tile
+            else
+            {
+                Debug.WriteLine($"The move from {currentIndex} to {operativeIndex} will put us on a boundary tile");
+
+                //If we get to this point, and have yet to find our color,
+                //Then we need to clear the passedTiles list,
+                //and return to our starting point with a new operator
+                if (!(GetColor(operativeIndex) == colors[turn]))
+                {
+                    passedTiles.Clear();
+                    operatorCode++;
+                    ProcessMove(startingIndex);
+                }
+                //Otherwise we should set all the tiles in the list to our color,
+                //and return with a new operator at the starting index
+                else
+                {
+                    SetColors();
+                    operatorCode++;
+                    ProcessMove(startingIndex);
+                }
+            }
+        }
+
+        private void SetColors()
+        {
+            foreach (int x in passedTiles)
+            {
+                GetButton(x).BackgroundColor = colors[turn];
+            }
+        }
+
+        private void NextTurn()
+        {
+            if(turn == 0)
+            {
+                turn = 1;
+            }
+            else
+            {
+                turn = 0;
+            }
+        }
 
         private void ResetGame(object sender, EventArgs e)
         {
@@ -431,5 +338,58 @@ namespace MauiReversi
         //{
         //    turnLB.Text = $"Player {turn + 1}'s turn";
         //}
+
+
+        //QOL functions.........................................................
+
+        private Button GetButton(int index)
+        {
+            return grid.ElementAt(index) as Button;
+        }
+
+        private void ChangeColor(int index)
+        {
+            GetButton(index).BackgroundColor = colors[turn];
+        }
+
+        private Color GetColor(int index)
+        {
+            return GetButton(index).BackgroundColor;
+        }
+
+        private void SetTiles()
+        {
+            GetButton(17).BackgroundColor = Colors.Pink;
+            GetButton(10).BackgroundColor = Colors.Pink;
+            GetButton(3).BackgroundColor = colors[turn];
+
+            GetButton(18).BackgroundColor = Colors.Pink;
+            GetButton(12).BackgroundColor = Colors.Pink;
+            GetButton(6).BackgroundColor = colors[turn];
+
+            GetButton(25).BackgroundColor = Colors.Pink;
+            GetButton(26).BackgroundColor = Colors.Pink;
+            GetButton(27).BackgroundColor = colors[turn];
+
+            GetButton(32).BackgroundColor = Colors.Pink;
+            GetButton(40).BackgroundColor = Colors.Pink;
+            GetButton(48).BackgroundColor = colors[turn];
+
+            GetButton(31).BackgroundColor = Colors.Pink;
+            GetButton(38).BackgroundColor = Colors.Pink;
+            GetButton(45).BackgroundColor = colors[turn];
+
+            GetButton(30).BackgroundColor = Colors.Pink;
+            GetButton(36).BackgroundColor = Colors.Pink;
+            GetButton(42).BackgroundColor = colors[turn];
+
+            GetButton(23).BackgroundColor = Colors.Pink;
+            GetButton(22).BackgroundColor = Colors.Pink;
+            GetButton(21).BackgroundColor = colors[turn];
+
+            GetButton(16).BackgroundColor = Colors.Pink;
+            GetButton(8).BackgroundColor = Colors.Pink;
+            GetButton(0).BackgroundColor = colors[turn];
+        }
     }
 }
